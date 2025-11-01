@@ -1,3 +1,4 @@
+import { DefensePostExecution } from "../../../src/core/execution/DefensePostExecution";
 import { PlayerExecution } from "../../../src/core/execution/PlayerExecution";
 import {
   Game,
@@ -91,5 +92,22 @@ describe("PlayerExecution", () => {
     expect(city.level()).toBe(1);
     expect(city.owner()).toBe(otherPlayer);
     expect(city.isActive()).toBe(true);
+  });
+
+  test("DefensePost periodically drains enemy troops", () => {
+    const friendlyTile = game.ref(40, 40);
+    const enemyTile = game.ref(44, 40);
+
+    player.conquer(friendlyTile);
+    otherPlayer.conquer(enemyTile);
+
+    const initialTroops = otherPlayer.troops();
+
+    game.addExecution(new DefensePostExecution(player, friendlyTile));
+
+    const ticksToRun = game.config().defensePostShellAttackRate() + 5;
+    executeTicks(game, ticksToRun);
+
+    expect(otherPlayer.troops()).toBeLessThan(initialTroops);
   });
 });

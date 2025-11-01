@@ -43,6 +43,7 @@ export enum GameUpdateType {
   Hash,
   UnitIncoming,
   BonusEvent,
+  DefensePostTracer,
   RailroadEvent,
   ConquestEvent,
   EmbargoEvent,
@@ -65,6 +66,7 @@ export type GameUpdate =
   | UnitIncomingUpdate
   | AllianceExtensionUpdate
   | BonusEventUpdate
+  | DefensePostTracerUpdate
   | RailroadUpdate
   | ConquestUpdate
   | EmbargoUpdate;
@@ -75,6 +77,12 @@ export interface BonusEventUpdate {
   tile: TileRef;
   gold: number;
   troops: number;
+}
+
+export interface DefensePostTracerUpdate {
+  type: GameUpdateType.DefensePostTracer;
+  origin: TileRef;
+  target: TileRef;
 }
 
 export enum RailType {

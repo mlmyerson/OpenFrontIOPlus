@@ -151,6 +151,8 @@ export interface Config {
   defensePostDefenseBonus(): number;
   defensePostSpeedBonus(): number;
   falloutDefenseModifier(percentOfFallout: number): number;
+  defensePostTroopDrainPercent(): number;
+  defensePostTroopDrainMinimum(): number;
   difficultyModifier(difficulty: Difficulty): number;
   warshipPatrolRange(): number;
   warshipShellAttackRate(): number;

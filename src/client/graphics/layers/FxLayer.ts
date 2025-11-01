@@ -3,6 +3,7 @@ import { UnitType } from "../../../core/game/Game";
 import {
   BonusEventUpdate,
   ConquestUpdate,
+  DefensePostTracerUpdate,
   GameUpdateType,
   RailroadUpdate,
 } from "../../../core/game/GameUpdates";
@@ -16,6 +17,7 @@ import { nukeFxFactory, ShockwaveFx } from "../fx/NukeFx";
 import { SpriteFx } from "../fx/SpriteFx";
 import { TargetFx } from "../fx/TargetFx";
 import { TextFx } from "../fx/TextFx";
+import { TracerFx } from "../fx/TracerFx";
 import { UnitExplosionFx } from "../fx/UnitExplosionFx";
 import { Layer } from "./Layer";
 export class FxLayer implements Layer {
@@ -53,6 +55,13 @@ export class FxLayer implements Layer {
       ?.[GameUpdateType.BonusEvent]?.forEach((bonusEvent) => {
         if (bonusEvent === undefined) return;
         this.onBonusEvent(bonusEvent);
+      });
+
+    this.game
+      .updatesSinceLastTick()
+      ?.[GameUpdateType.DefensePostTracer]?.forEach((event) => {
+        if (event === undefined) return;
+        this.onDefensePostTracer(event);
       });
 
     this.game
@@ -98,15 +107,17 @@ export class FxLayer implements Layer {
     const gold = bonus.gold;
     const troops = bonus.troops;
 
-    if (gold > 0) {
-      const shortened = renderNumber(gold, 0);
-      this.addTextFx(`+ ${shortened}`, x, y);
+    if (gold !== 0) {
+      const shortened = renderNumber(Math.abs(gold), 0);
+      const prefix = gold > 0 ? "+" : "-";
+      this.addTextFx(`${prefix} ${shortened}`, x, y);
       y += 10; // increase y so the next popup starts bellow
     }
 
-    if (troops > 0) {
-      const shortened = renderNumber(troops, 0);
-      this.addTextFx(`+ ${shortened} troops`, x, y);
+    if (troops !== 0) {
+      const shortened = renderNumber(Math.abs(troops), 0);
+      const prefix = troops > 0 ? "+" : "-";
+      this.addTextFx(`${prefix} ${shortened} troops`, x, y);
       y += 10;
     }
   }
@@ -114,6 +125,15 @@ export class FxLayer implements Layer {
   addTextFx(text: string, x: number, y: number) {
     const textFx = new TextFx(text, x, y, 1000, 20);
     this.allFx.push(textFx);
+  }
+
+  onDefensePostTracer(event: DefensePostTracerUpdate) {
+    const startX = this.game.x(event.origin);
+    const startY = this.game.y(event.origin);
+    const endX = this.game.x(event.target);
+    const endY = this.game.y(event.target);
+    const tracer = new TracerFx(startX, startY, endX, endY, 350);
+    this.allFx.push(tracer);
   }
 
   onUnitEvent(unit: UnitView) {

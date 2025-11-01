@@ -310,6 +310,14 @@ export class DefaultConfig implements Config {
     return 3;
   }
 
+  defensePostTroopDrainPercent(): number {
+    return 0.00025; // Approximately 0.025% per salvo at higher fire rate
+  }
+
+  defensePostTroopDrainMinimum(): number {
+    return 50;
+  }
+
   playerTeams(): TeamCountConfig {
     return this._gameConfig.playerTeams ?? 0;
   }
@@ -940,7 +948,7 @@ export class DefaultConfig implements Config {
   }
 
   defensePostShellAttackRate(): number {
-    return 100;
+    return 5;
   }
 
   safeFromPiratesCooldownMax(): number {
