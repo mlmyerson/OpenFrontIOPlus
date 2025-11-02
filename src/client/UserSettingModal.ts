@@ -477,6 +477,17 @@ export class UserSettingModal extends LitElement {
       ></setting-keybind>
 
       <setting-keybind
+        action="buildRecruitmentCenter"
+        label=${translateText("user_setting.build_recruitment_center")}
+        description=${translateText(
+          "user_setting.build_recruitment_center_desc",
+        )}
+        defaultKey="KeyR"
+        .value=${this.keybinds["buildRecruitmentCenter"]?.key ?? ""}
+        @change=${this.handleKeybindChange}
+      ></setting-keybind>
+
+      <setting-keybind
         action="buildMissileSilo"
         label=${translateText("user_setting.build_missile_silo")}
         description=${translateText("user_setting.build_missile_silo_desc")}

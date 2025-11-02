@@ -7,6 +7,7 @@ import mirvIcon from "../../../../resources/images/MIRVIcon.svg";
 import missileSiloIcon from "../../../../resources/images/MissileSiloIconWhite.svg";
 import hydrogenBombIcon from "../../../../resources/images/MushroomCloudIconWhite.svg";
 import atomBombIcon from "../../../../resources/images/NukeIconWhite.svg";
+import recruitmentCenterIcon from "../../../../resources/images/PopulationIconSolidWhite.svg";
 import portIcon from "../../../../resources/images/PortIcon.svg";
 import samLauncherIcon from "../../../../resources/images/SamLauncherIconWhite.svg";
 import defensePostIcon from "../../../../resources/images/ShieldIconWhite.svg";
@@ -28,6 +29,7 @@ export class UnitDisplay extends LitElement implements Layer {
   private _cities = 0;
   private _warships = 0;
   private _factories = 0;
+  private _recruitmentCenters = 0;
   private _missileSilo = 0;
   private _port = 0;
   private _defensePost = 0;
@@ -61,7 +63,8 @@ export class UnitDisplay extends LitElement implements Layer {
       config.isUnitDisabled(UnitType.Warship) &&
       config.isUnitDisabled(UnitType.AtomBomb) &&
       config.isUnitDisabled(UnitType.HydrogenBomb) &&
-      config.isUnitDisabled(UnitType.MIRV);
+      config.isUnitDisabled(UnitType.MIRV) &&
+      config.isUnitDisabled(UnitType.RecruitmentCenter);
     this.requestUpdate();
   }
 
@@ -107,6 +110,9 @@ export class UnitDisplay extends LitElement implements Layer {
     this._defensePost = player.totalUnitLevels(UnitType.DefensePost);
     this._samLauncher = player.totalUnitLevels(UnitType.SAMLauncher);
     this._factories = player.totalUnitLevels(UnitType.Factory);
+    this._recruitmentCenters = player.totalUnitLevels(
+      UnitType.RecruitmentCenter,
+    );
     this._warships = player.totalUnitLevels(UnitType.Warship);
     this.requestUpdate();
   }
@@ -144,6 +150,13 @@ export class UnitDisplay extends LitElement implements Layer {
               UnitType.Factory,
               "factory",
               this.keybinds["buildFactory"]?.key ?? "2",
+            )}
+            ${this.renderUnitItem(
+              recruitmentCenterIcon,
+              this._recruitmentCenters,
+              UnitType.RecruitmentCenter,
+              "recruitment_center",
+              this.keybinds["buildRecruitmentCenter"]?.key ?? "R",
             )}
             ${this.renderUnitItem(
               portIcon,

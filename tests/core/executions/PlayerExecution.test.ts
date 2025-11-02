@@ -110,4 +110,17 @@ describe("PlayerExecution", () => {
 
     expect(otherPlayer.troops()).toBeLessThan(initialTroops);
   });
+
+  test("Recruitment centers increase troop growth rate", () => {
+    const tile = game.ref(55, 55);
+    player.conquer(tile);
+
+    const baseline = game.config().troopIncreaseRate(player);
+
+    player.buildUnit(UnitType.RecruitmentCenter, tile, {});
+
+    const boosted = game.config().troopIncreaseRate(player);
+
+    expect(boosted).toBeGreaterThan(baseline);
+  });
 });

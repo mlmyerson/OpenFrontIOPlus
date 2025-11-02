@@ -105,6 +105,8 @@
     "build_desc": "Description",
     "build_city": "City",
     "build_city_desc": "Increases your max population. Useful when you can't expand your territory or you're about to hit your population limit.",
+    "build_recruitment_center": "Recruitment Center",
+    "build_recruitment_center_desc": "Improves your recruitment network to accelerate troop growth.",
     "build_factory": "Factory",
     "build_factory_desc": "Automatically builds railroads to nearby cities, ports and other factories, and can also link up with friendly neighbors. Trains spawn regularly and give you a fixed amount of gold for each building they visit along the route, with extra gold for visiting your neighbors' buildings.",
     "build_defense": "Defense Post",
@@ -290,6 +292,7 @@
     "atom_bomb": "Atom Bomb",
     "hydrogen_bomb": "Hydrogen Bomb",
     "mirv": "MIRV",
+    "recruitment_center": "Recruitment Center",
     "factory": "Factory"
   },
   "user_setting": {
@@ -334,6 +337,8 @@
     "build_factory_desc": "Build a Factory under your cursor.",
     "build_defense_post": "Build Defense Post",
     "build_defense_post_desc": "Build a Defense Post under your cursor.",
+    "build_recruitment_center": "Build Recruitment Center",
+    "build_recruitment_center_desc": "Build a Recruitment Center under your cursor.",
     "build_port": "Build Port",
     "build_port_desc": "Build a Port under your cursor.",
     "build_warship": "Build Warship",
@@ -481,6 +486,7 @@
       "port": "Sends trade ships to generate gold",
       "defense_post": "Increases defenses of nearby borders",
       "city": "Increases max population",
+      "recruitment_center": "Speeds up troop growth by improving recruitment",
       "factory": "Creates railroads and spawns trains"
     },
     "not_enough_money": "Not enough money"
@@ -526,6 +532,7 @@
     "gold": "Gold",
     "ports": "Ports",
     "cities": "Cities",
+    "recruitment_centers": "Recruitment Centers",
     "factories": "Factories",
     "missile_launchers": "Missile launchers",
     "sams": "SAMs",

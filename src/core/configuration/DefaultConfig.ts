@@ -286,6 +286,14 @@ export class DefaultConfig implements Config {
     return 250_000;
   }
 
+  recruitmentCenterTroopRateBonusPerLevel(): number {
+    return 0.05;
+  }
+
+  recruitmentCenterTroopRateBonusCap(): number {
+    return 0.5;
+  }
+
   falloutDefenseModifier(falloutRatio: number): number {
     // falloutRatio is between 0 and 1
     // So defense modifier is between [5, 2.5]
@@ -536,6 +544,16 @@ export class DefaultConfig implements Config {
           constructionDuration: this.instantBuild() ? 0 : 2 * 10,
           canBuildTrainStation: true,
           experimental: true,
+          upgradable: true,
+        };
+      case UnitType.RecruitmentCenter:
+        return {
+          cost: this.costWrapper(
+            (numUnits: number) => Math.min(1_500_000, (numUnits + 1) * 250_000),
+            UnitType.RecruitmentCenter,
+          ),
+          territoryBound: true,
+          constructionDuration: this.instantBuild() ? 0 : 3 * 10,
           upgradable: true,
         };
       case UnitType.Construction:
@@ -844,6 +862,20 @@ export class DefaultConfig implements Config {
 
     const ratio = 1 - player.troops() / max;
     toAdd *= ratio;
+
+    const recruitmentLevels = player
+      .units(UnitType.RecruitmentCenter)
+      .reduce((acc, unit) => acc + unit.level(), 0);
+
+    if (recruitmentLevels > 0) {
+      const bonusPerLevel = this.recruitmentCenterTroopRateBonusPerLevel();
+      const maxBonus = this.recruitmentCenterTroopRateBonusCap();
+      const bonusMultiplier = Math.min(
+        maxBonus,
+        recruitmentLevels * bonusPerLevel,
+      );
+      toAdd *= 1 + bonusMultiplier;
+    }
 
     if (player.type() === PlayerType.Bot) {
       toAdd *= 0.6;

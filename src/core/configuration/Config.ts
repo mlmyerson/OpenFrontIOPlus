@@ -118,6 +118,8 @@ export interface Config {
   proximityBonusPortsNb(totalPorts: number): number;
   maxTroops(player: Player | PlayerView): number;
   cityTroopIncrease(): number;
+  recruitmentCenterTroopRateBonusPerLevel(): number;
+  recruitmentCenterTroopRateBonusCap(): number;
   boatAttackAmount(attacker: Player, defender: Player | TerraNullius): number;
   shellLifetime(): number;
   boatMaxNumber(): number;

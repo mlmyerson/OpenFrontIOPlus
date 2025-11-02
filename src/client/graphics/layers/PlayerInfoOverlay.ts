@@ -7,6 +7,7 @@ import cityIcon from "../../../../resources/images/CityIconWhite.svg";
 import factoryIcon from "../../../../resources/images/FactoryIconWhite.svg";
 import goldCoinIcon from "../../../../resources/images/GoldCoinIcon.svg";
 import missileSiloIcon from "../../../../resources/images/MissileSiloIconWhite.svg";
+import recruitmentCenterIcon from "../../../../resources/images/PopulationIconSolidWhite.svg";
 import portIcon from "../../../../resources/images/PortIcon.svg";
 import samLauncherIcon from "../../../../resources/images/SamLauncherIconWhite.svg";
 import { renderPlayerFlag } from "../../../core/CustomFlag";
@@ -363,6 +364,12 @@ export class PlayerInfoOverlay extends LitElement implements Layer {
                   UnitType.City,
                   cityIcon,
                   "player_info_overlay.cities",
+                )}
+                ${this.displayUnitCount(
+                  player,
+                  UnitType.RecruitmentCenter,
+                  recruitmentCenterIcon,
+                  "player_info_overlay.recruitment_centers",
                 )}
                 ${this.displayUnitCount(
                   player,

@@ -10,6 +10,10 @@ export interface UnitTypeRenderContext {
 
 const unitOptions: { type: UnitType; translationKey: string }[] = [
   { type: UnitType.City, translationKey: "unit_type.city" },
+  {
+    type: UnitType.RecruitmentCenter,
+    translationKey: "unit_type.recruitment_center",
+  },
   { type: UnitType.DefensePost, translationKey: "unit_type.defense_post" },
   { type: UnitType.Port, translationKey: "unit_type.port" },
   { type: UnitType.Warship, translationKey: "unit_type.warship" },

@@ -409,6 +409,10 @@ export class FakeHumanExecution implements Execution {
       this.maybeSpawnStructure(UnitType.Factory, (num) => num) ||
       this.maybeSpawnStructure(UnitType.DefensePost, (num) => (num + 2) ** 2) ||
       this.maybeSpawnStructure(UnitType.SAMLauncher, (num) => num ** 2) ||
+      this.maybeSpawnStructure(
+        UnitType.RecruitmentCenter,
+        (num) => (num + 1) ** 2,
+      ) ||
       this.maybeSpawnStructure(UnitType.MissileSilo, (num) => num ** 2)
     );
   }

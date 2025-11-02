@@ -15,6 +15,7 @@ export function structureSpawnTileValue(
   switch (type) {
     case UnitType.City:
     case UnitType.Factory:
+    case UnitType.RecruitmentCenter:
     case UnitType.MissileSilo: {
       return (tile) => {
         let w = 0;
@@ -107,6 +108,7 @@ export function structureSpawnTileValue(
         switch (unit.type()) {
           case UnitType.City:
           case UnitType.Factory:
+          case UnitType.RecruitmentCenter:
           case UnitType.MissileSilo:
           case UnitType.Port:
             protectTiles.add(unit.tile());
