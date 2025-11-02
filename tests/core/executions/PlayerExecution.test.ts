@@ -8,11 +8,29 @@ import {
   UnitType,
 } from "../../../src/core/game/Game";
 import { setup } from "../../util/Setup";
+import { TestConfig } from "../../util/TestConfig";
 import { executeTicks } from "../../util/utils";
+
+function findInteriorLandTile(game: Game) {
+  for (let x = 10; x < game.width() - 10; x++) {
+    for (let y = 10; y < game.height() - 10; y++) {
+      const candidate = game.ref(x, y);
+      if (!game.isLand(candidate)) {
+        continue;
+      }
+      const neighbors = game.neighbors(candidate);
+      if (neighbors.every((neighbor) => game.isLand(neighbor))) {
+        return candidate;
+      }
+    }
+  }
+  throw new Error("Failed to locate interior land tile for hamlet test");
+}
 
 let game: Game;
 let player: Player;
 let otherPlayer: Player;
+let config: TestConfig;
 
 describe("PlayerExecution", () => {
   beforeEach(async () => {
@@ -34,9 +52,12 @@ describe("PlayerExecution", () => {
 
     player = game.player("player_id");
     otherPlayer = game.player("other_id");
+    config = game.config() as TestConfig;
+    config.setHamletHoldDurationTicks(5);
+    config.setHamletCheckIntervalTicks(1);
+    config.setHamletChecksPerInterval(100);
 
     game.addExecution(new PlayerExecution(player));
-    game.addExecution(new PlayerExecution(otherPlayer));
   });
 
   test("DefensePost lv. 1 is destroyed when tile owner changes", () => {
@@ -122,5 +143,24 @@ describe("PlayerExecution", () => {
     const boosted = game.config().troopIncreaseRate(player);
 
     expect(boosted).toBeGreaterThan(baseline);
+  });
+
+  test("Hamlets spawn on long-held safe tiles", () => {
+    const tile = findInteriorLandTile(game);
+
+    player.conquer(tile);
+    for (const neighbor of game.neighbors(tile)) {
+      if (game.isLand(neighbor)) {
+        player.conquer(neighbor);
+      }
+    }
+
+    const ticksToWait =
+      config.hamletHoldDurationTicks() + config.hamletCheckIntervalTicks() + 5;
+    executeTicks(game, ticksToWait);
+
+    const hamlets = player.units(UnitType.Hamlet);
+    expect(hamlets.length).toBeGreaterThanOrEqual(1);
+    expect(hamlets.some((unit) => unit.tile() === tile)).toBe(true);
   });
 });

@@ -12,6 +12,9 @@ import { TileRef } from "../../src/core/game/GameMap";
 export class TestConfig extends DefaultConfig {
   private _proximityBonusPortsNb: number = 0;
   private _defaultNukeSpeed: number = 4;
+  private _hamletHoldDurationTicks?: Tick;
+  private _hamletCheckIntervalTicks?: Tick;
+  private _hamletChecksPerInterval?: number;
 
   samHittingChance(): number {
     return 1;
@@ -48,6 +51,30 @@ export class TestConfig extends DefaultConfig {
 
   defaultSamRange(): number {
     return 20;
+  }
+
+  hamletHoldDurationTicks(): Tick {
+    return this._hamletHoldDurationTicks ?? super.hamletHoldDurationTicks();
+  }
+
+  setHamletHoldDurationTicks(ticks: Tick): void {
+    this._hamletHoldDurationTicks = ticks;
+  }
+
+  hamletCheckIntervalTicks(): Tick {
+    return this._hamletCheckIntervalTicks ?? super.hamletCheckIntervalTicks();
+  }
+
+  setHamletCheckIntervalTicks(ticks: Tick): void {
+    this._hamletCheckIntervalTicks = ticks;
+  }
+
+  hamletChecksPerInterval(): number {
+    return this._hamletChecksPerInterval ?? super.hamletChecksPerInterval();
+  }
+
+  setHamletChecksPerInterval(checks: number): void {
+    this._hamletChecksPerInterval = checks;
   }
 
   spawnImmunityDuration(): Tick {

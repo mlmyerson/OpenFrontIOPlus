@@ -26,6 +26,7 @@ import {
   Team,
   TerrainType,
   TerraNullius,
+  Tick,
   Trios,
   Unit,
   UnitInfo,
@@ -73,6 +74,7 @@ export class GameImpl implements Game {
 
   private nextPlayerID = 1;
   private _nextUnitID = 1;
+  private readonly tileHeldSinceMap: Map<TileRef, Tick> = new Map();
 
   private updates: GameUpdates = createGameUpdatesMap();
   private unitGrid: UnitGrid;
@@ -101,6 +103,15 @@ export class GameImpl implements Game {
       this.populateTeams();
     }
     this.addPlayers();
+    this.initializeTileHoldTimestamps();
+  }
+
+  private initializeTileHoldTimestamps(): void {
+    this._map.forEachTile((tile) => {
+      if (this._map.hasOwner(tile)) {
+        this.tileHeldSinceMap.set(tile, this._ticks);
+      }
+    });
   }
 
   private populateTeams() {
@@ -512,6 +523,7 @@ export class GameImpl implements Game {
     this._map.setOwnerID(tile, owner.smallID());
     owner._tiles.add(tile);
     owner._lastTileChange = this._ticks;
+    this.tileHeldSinceMap.set(tile, this._ticks);
     this.updateBorders(tile);
     this._map.setFallout(tile, false);
     this.addUpdate({
@@ -534,6 +546,7 @@ export class GameImpl implements Game {
     previousOwner._borderTiles.delete(tile);
 
     this._map.setOwnerID(tile, 0);
+    this.tileHeldSinceMap.delete(tile);
     this.updateBorders(tile);
     this.addUpdate({
       type: GameUpdateType.Tile,
@@ -820,7 +833,12 @@ export class GameImpl implements Game {
     return this._map.hasOwner(ref);
   }
   setOwnerID(ref: TileRef, playerId: number): void {
-    return this._map.setOwnerID(ref, playerId);
+    this._map.setOwnerID(ref, playerId);
+    if (playerId === 0) {
+      this.tileHeldSinceMap.delete(ref);
+    } else {
+      this.tileHeldSinceMap.set(ref, this._ticks);
+    }
   }
   hasFallout(ref: TileRef): boolean {
     return this._map.hasFallout(ref);
@@ -848,6 +866,9 @@ export class GameImpl implements Game {
   }
   forEachTile(fn: (tile: TileRef) => void): void {
     return this._map.forEachTile(fn);
+  }
+  tileHeldSince(tile: TileRef): Tick | undefined {
+    return this.tileHeldSinceMap.get(tile);
   }
   manhattanDist(c1: TileRef, c2: TileRef): number {
     return this._map.manhattanDist(c1, c2);

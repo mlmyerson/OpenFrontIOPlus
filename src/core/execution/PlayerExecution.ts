@@ -3,6 +3,19 @@ import { Execution, Game, Player, UnitType } from "../game/Game";
 import { GameImpl } from "../game/GameImpl";
 import { GameMap, TileRef } from "../game/GameMap";
 import { calculateBoundingBox, getMode, inscribed, simpleHash } from "../Util";
+import { TrainStationExecution } from "./TrainStationExecution";
+
+const HAMLET_BLOCKING_TYPES: UnitType[] = [
+  UnitType.City,
+  UnitType.Factory,
+  UnitType.RecruitmentCenter,
+  UnitType.MissileSilo,
+  UnitType.DefensePost,
+  UnitType.SAMLauncher,
+  UnitType.Port,
+  UnitType.Hamlet,
+  UnitType.Construction,
+];
 
 export class PlayerExecution implements Execution {
   private readonly ticksPerClusterCalc = 20;
@@ -11,6 +24,8 @@ export class PlayerExecution implements Execution {
   private lastCalc = 0;
   private mg: Game;
   private active = true;
+  private lastHamletCheckTick = 0;
+  private hamletTileCursor = 0;
 
   constructor(private player: Player) {}
 
@@ -76,6 +91,8 @@ export class PlayerExecution implements Execution {
     const goldFromWorkers = this.config.goldAdditionRate(this.player);
     this.player.addGold(goldFromWorkers);
 
+    this.maybeSpawnHamlet(ticks);
+
     // Record stats
     this.mg.stats().goldWork(this.player, goldFromWorkers);
 
@@ -108,6 +125,83 @@ export class PlayerExecution implements Execution {
         }
       }
     }
+  }
+
+  private maybeSpawnHamlet(ticks: number) {
+    const interval = this.config.hamletCheckIntervalTicks();
+    if (interval <= 0) {
+      return;
+    }
+    if (ticks - this.lastHamletCheckTick < interval) {
+      return;
+    }
+    this.lastHamletCheckTick = ticks;
+
+    const tiles = Array.from(this.player.tiles());
+    if (tiles.length === 0) {
+      return;
+    }
+
+    const checks = Math.min(
+      tiles.length,
+      Math.max(0, this.config.hamletChecksPerInterval()),
+    );
+    if (checks === 0) {
+      return;
+    }
+
+    for (let i = 0; i < checks; i++) {
+      if (this.hamletTileCursor >= tiles.length) {
+        this.hamletTileCursor = 0;
+      }
+      const tile = tiles[this.hamletTileCursor++];
+      if (!this.isHamletEligible(tile, ticks)) {
+        continue;
+      }
+      this.spawnHamlet(tile);
+      break;
+    }
+  }
+
+  private isHamletEligible(tile: TileRef, ticks: number): boolean {
+    if (this.mg.ownerID(tile) !== this.player.smallID()) {
+      return false;
+    }
+    if (
+      !this.mg.isLand(tile) ||
+      this.mg.isBorder(tile) ||
+      this.mg.hasFallout(tile)
+    ) {
+      return false;
+    }
+
+    const heldSince = this.mg.tileHeldSince(tile);
+    if (heldSince === undefined) {
+      return false;
+    }
+    if (ticks - heldSince < this.config.hamletHoldDurationTicks()) {
+      return false;
+    }
+
+    const blockingUnits = this.mg.nearbyUnits(
+      tile,
+      0,
+      HAMLET_BLOCKING_TYPES,
+      ({ unit }) => {
+        return unit.tile() === tile;
+      },
+    );
+    if (blockingUnits.length > 0) {
+      return false;
+    }
+
+    return true;
+  }
+
+  private spawnHamlet(tile: TileRef): void {
+    const hamlet = this.player.buildUnit(UnitType.Hamlet, tile, {});
+    this.mg.addExecution(new TrainStationExecution(hamlet));
+    this.mg.setOwnerID(tile, this.player.smallID());
   }
 
   private removeClusters() {

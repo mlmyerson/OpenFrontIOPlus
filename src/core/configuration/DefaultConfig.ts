@@ -326,6 +326,18 @@ export class DefaultConfig implements Config {
     return 50;
   }
 
+  hamletHoldDurationTicks(): Tick {
+    return 60 * 10; // one minute assuming 10 ticks per second
+  }
+
+  hamletCheckIntervalTicks(): Tick {
+    return 3 * 10; // every 3 seconds
+  }
+
+  hamletChecksPerInterval(): number {
+    return 25;
+  }
+
   playerTeams(): TeamCountConfig {
     return this._gameConfig.playerTeams ?? 0;
   }
@@ -555,6 +567,13 @@ export class DefaultConfig implements Config {
           territoryBound: true,
           constructionDuration: this.instantBuild() ? 0 : 3 * 10,
           upgradable: true,
+        };
+      case UnitType.Hamlet:
+        return {
+          cost: () => 0n,
+          territoryBound: true,
+          constructionDuration: 0,
+          canBuildTrainStation: true,
         };
       case UnitType.Construction:
         return {

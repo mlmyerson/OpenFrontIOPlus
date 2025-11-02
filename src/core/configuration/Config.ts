@@ -155,6 +155,9 @@ export interface Config {
   falloutDefenseModifier(percentOfFallout: number): number;
   defensePostTroopDrainPercent(): number;
   defensePostTroopDrainMinimum(): number;
+  hamletHoldDurationTicks(): Tick;
+  hamletCheckIntervalTicks(): Tick;
+  hamletChecksPerInterval(): number;
   difficultyModifier(difficulty: Difficulty): number;
   warshipPatrolRange(): number;
   warshipShellAttackRate(): number;

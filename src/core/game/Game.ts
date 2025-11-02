@@ -189,6 +189,7 @@ export enum UnitType {
   Train = "Train",
   Factory = "Factory",
   RecruitmentCenter = "Recruitment Center",
+  Hamlet = "Hamlet",
 }
 
 export enum TrainType {
@@ -204,6 +205,7 @@ const _structureTypes: ReadonlySet<UnitType> = new Set([
   UnitType.MissileSilo,
   UnitType.Port,
   UnitType.RecruitmentCenter,
+  UnitType.Hamlet,
 ]);
 
 export function isStructureType(type: UnitType): boolean {
@@ -257,6 +259,7 @@ export interface UnitParamsMap {
 
   [UnitType.Factory]: Record<string, never>;
   [UnitType.RecruitmentCenter]: Record<string, never>;
+  [UnitType.Hamlet]: Record<string, never>;
 
   [UnitType.MissileSilo]: Record<string, never>;
 
@@ -661,6 +664,7 @@ export interface Game extends GameMap {
   map(): GameMap;
   miniMap(): GameMap;
   forEachTile(fn: (tile: TileRef) => void): void;
+  tileHeldSince(tile: TileRef): Tick | undefined;
 
   // Player Management
   player(id: PlayerID): Player;
